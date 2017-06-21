@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_marginTop="@dimen/small_5"
+    android:layout_marginLeft="@dimen/small_5"
+    android:layout_marginRight="@dimen/small_5"
+    style="@style/matchwrap">
+    <android.support.v7.widget.CardView  style="@style/matchwrap"
+        android:layout_height="match_parent">
+        <LinearLayout  style="@style/Widget.CardContent"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/recipe_image"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/brownies"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:id="@+id/recipe_name"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:id="@+id/recipe_ingredient"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
+
+
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</FrameLayout>

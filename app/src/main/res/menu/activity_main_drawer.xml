@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_share"
+            android:icon="@android:drawable/ic_menu_share"
+            android:title="Share" />
+        <item
+            android:id="@+id/nav_slideshow"
+            android:icon="@android:drawable/sym_call_outgoing"
+            android:title="Contact" />
+        <item
+            android:id="@+id/nav_gallery"
+            android:icon="@android:drawable/ic_dialog_info"
+            android:title="About" />
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@android:drawable/stat_sys_upload_done"
+            android:title="Repository" />
+    </group>
+
+
+</menu>
