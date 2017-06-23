@@ -12,8 +12,6 @@ import android.widget.TextView;
 import com.example.adeolu.bakingapp.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.squareup.picasso.Picasso;
-
 import java.lang.reflect.Type;
 import java.util.List;
 

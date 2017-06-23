@@ -20,6 +20,7 @@ import com.example.adeolu.bakingapp.R;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -33,7 +34,6 @@ import static org.hamcrest.Matchers.allOf;
 public class MainActivityTestingMobile {
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
-
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
 
@@ -52,22 +52,13 @@ public class MainActivityTestingMobile {
             }
         };
     }
-    //  @Test
-    /*public void mainActivityTest() {
-        ViewInteraction textView = onView(
-                allOf(withId(R.id.tv_recipe_name), withText("Nutella Pie"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.rv_recipe),
-                                        0),
-                                0),
-                        isDisplayed()));
-        textView.check(matches(withText("Nutella Pie")));
 
-        ViewInteraction recyclerView = onView(
-                allOf(withId(R.id.mylist), isDisplayed()));
-        recyclerView.perform(actionOnItemAtPosition(0, click()));
+    @Test
+    public void mainActivityTest() {
+
+
+        onView(allOf(withId(R.id.mylist), isDisplayed()))
+                .perform(actionOnItemAtPosition(1, click()));
 
     }
-*/
 }
