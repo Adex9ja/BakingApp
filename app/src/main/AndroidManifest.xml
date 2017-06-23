@@ -37,22 +37,24 @@
             android:label="@string/title_activity_detail"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".DetailActivityTab"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name=".DetailActivityTab"  />
 
         <receiver android:name=".widget.BakingAppWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="com.example.adeolu.bakingapp.app.ACTION_DATA_UPDATED" />
+                <action android:name="com.example.adeolu.bakingapp.ACTION_DATA_UPDATED"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/baking_app_widget_info" />
         </receiver>
+
         <service
             android:name=".widget.BakingAppRemoteViewService"
-           android:permission="android.permission.BIND_REMOTEVIEWS" />
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>

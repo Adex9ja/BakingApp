@@ -21,27 +21,31 @@ public class BakingAppWidget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);
+       RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_app_widget);
 
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        views.setOnClickPendingIntent(R.id.widget, pendingIntent);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             setRemoteAdapter(context, views);
         } else {
             setRemoteAdapterV11(context, views);
         }
-        Intent clickIntentTemplate =  new Intent(context, MainActivity.class);
+
         PendingIntent clickPendingIntentTemplate = TaskStackBuilder.create(context)
-                .addNextIntentWithParentStack(clickIntentTemplate)
+                .addNextIntentWithParentStack(intent)
                 .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        views.setPendingIntentTemplate(R.id.list_widget, clickPendingIntentTemplate);
-        //views.setEmptyView();
+        views.setPendingIntentTemplate(R.id.lv_ingredients, clickPendingIntentTemplate);
+        views.setEmptyView(R.id.lv_ingredients, R.id.widget_empty);
+
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     private static void setRemoteAdapter(Context context, RemoteViews views) {
-        views.setRemoteAdapter(R.id.list_widget,new Intent(context,BakingAppRemoteViewService.class));
+        views.setRemoteAdapter(R.id.lv_ingredients,new Intent(context,BakingAppRemoteViewService.class));
     }
     private static void setRemoteAdapterV11(Context context, RemoteViews views){
-        views.setRemoteAdapter(0,R.id.list_widget, new Intent(context,BakingAppRemoteViewService.class));
+        views.setRemoteAdapter(0,R.id.lv_ingredients, new Intent(context,BakingAppRemoteViewService.class));
     }
 
     @Override
@@ -60,15 +64,16 @@ public class BakingAppWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
-                new ComponentName(context, getClass()));
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_widget);
+        if(intent.getAction() == MainActivity.ACTION_DATA_UPDATED){
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
+                    new ComponentName(context, getClass()));
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.lv_ingredients);
+        }
     }
 
     @Override
     public void onDisabled(Context context) {
-        // Enter relevant functionality for when the last widget is disabled
     }
 }
 

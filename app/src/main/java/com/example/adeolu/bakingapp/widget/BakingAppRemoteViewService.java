@@ -30,6 +30,12 @@ public class BakingAppRemoteViewService extends RemoteViewsService {
         return new RemoteViewsFactory() {
             @Override
             public void onCreate() {
+
+            }
+            List<JSonResponse.Recipe> recipes;
+            @Override
+            public void onDataSetChanged() {
+                final long identityToken = Binder.clearCallingIdentity();
                 try {
                     AssetManager assetManager = getAssets();
                     InputStream inputStream = assetManager.open("baking.json");
@@ -40,13 +46,6 @@ public class BakingAppRemoteViewService extends RemoteViewsService {
                 catch (Exception e){
                     e.printStackTrace();
                 }
-            }
-            List<JSonResponse.Recipe> recipes;
-            @Override
-            public void onDataSetChanged() {
-                final long identityToken = Binder.clearCallingIdentity();
-
-
                 Binder.restoreCallingIdentity(identityToken);
             }
 
@@ -63,13 +62,13 @@ public class BakingAppRemoteViewService extends RemoteViewsService {
 
             @Override
             public RemoteViews getViewAt(int i) {
-                RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.recipe_card_view);
+                if (recipes == null || i > recipes.size()) {
+                    return null;
+                }
+                RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.ingredient_list_item);
                 remoteViews.setTextViewText(R.id.recipe_name, recipes.get(i).getName());
                 remoteViews.setTextViewText(R.id.recipe_ingredient, getDescription(i));
-                remoteViews.setImageViewResource(R.id.recipe_image,getImage(i));
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),0,intent,0);
-                remoteViews.setOnClickPendingIntent(R.id.list_widget,pendingIntent);
+                remoteViews.setOnClickFillInIntent(R.id.recipe_ingredient, new Intent());
                 return remoteViews;
             }
 
@@ -98,20 +97,7 @@ public class BakingAppRemoteViewService extends RemoteViewsService {
                     concat += TextUtils.isEmpty(concat) ? s.getIngredient() : ", " + s.getIngredient();
                 return concat;
             }
-            private int getImage(int i){
-                switch (i){
-                    case 0:
-                         return R.drawable.nutellapie;
-                    case 1:
-                        return R.drawable.brownies;
-                    case 2:
-                        return R.drawable.yellowcake;
-                    case 3:
-                        return R.drawable.cheesecake;
-                    default:
-                        return R.drawable.nutellapie;
-                }
-            }
+
 
         };
 

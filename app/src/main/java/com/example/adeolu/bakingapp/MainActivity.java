@@ -1,5 +1,6 @@
 package com.example.adeolu.bakingapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.mylist) RecyclerView recyclerView;
     private ProgressBar pb_loading_indicator,pb_loading_indicator_tab;
     private boolean isTwoPane = false;
+    public static final String ACTION_DATA_UPDATED ="com.example.adeolu.bakingapp.ACTION_DATA_UPDATED";
 
     private RecipeAdapter recipeAdapter;
     private final int RECIPE_LOAD_ID = 100;
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity
 
         if(savedInstanceState == null)
             getSupportLoaderManager().initLoader(RECIPE_LOAD_ID,null,this);
+
     }
 
     @Override
@@ -111,19 +114,22 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
+        if (id == R.id.nav_about) {
+            showAbout();
+        } else if (id == R.id.nav_contact) {
 
         } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_repo) {
 
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void showAbout() {
     }
 
     @Override
@@ -197,4 +203,6 @@ public class MainActivity extends AppCompatActivity
     public void onLoaderReset(Loader<List<Recipe>> loader) {
 
     }
+
+
 }

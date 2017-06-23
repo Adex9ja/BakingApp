@@ -15,21 +15,21 @@
                     style="@style/matchwrap"
                     android:layout_width="0dp"
                     android:layout_weight="3"
-                    android:text="Ingredient"
+                    android:text="@string/stringrediet"
                     android:textColor="@color/accent"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"/>
                 <TextView
                     style="@style/matchwrap"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:text="Quantity"
+                    android:text="@string/quantity"
                     android:textColor="@color/accent"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"/>
                 <TextView
                     style="@style/matchwrap"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:text="Measure"
+                    android:text="@string/measure"
                     android:textColor="@color/accent"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"/>
             </LinearLayout>

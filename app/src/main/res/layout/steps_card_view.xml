@@ -3,11 +3,12 @@
     style="@style/matchwrap">
     <android.support.v7.widget.CardView  style="@style/matchwrap">
         <LinearLayout  style="@style/Widget.CardContent"
+            android:background="@drawable/layout_clicked"
             android:orientation="horizontal">
             <ImageView
                 android:id="@+id/step_image"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="@dimen/step_pix"
                 android:layout_weight="1"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/ic_launcher"
