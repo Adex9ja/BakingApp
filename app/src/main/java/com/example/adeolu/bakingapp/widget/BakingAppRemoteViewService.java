@@ -10,14 +10,9 @@ import android.widget.RemoteViewsService;
 
 import com.example.adeolu.bakingapp.MainActivity;
 import com.example.adeolu.bakingapp.R;
-import com.example.adeolu.bakingapp.utils.JSonResponse;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
+import com.example.adeolu.bakingapp.utils.JSonResponse.Ingredients;
+import com.example.adeolu.bakingapp.utils.JSonResponse.Recipe;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -32,21 +27,10 @@ public class BakingAppRemoteViewService extends RemoteViewsService {
             public void onCreate() {
 
             }
-            List<JSonResponse.Recipe> recipes;
+            List<Recipe> recipes;
             @Override
             public void onDataSetChanged() {
-                final long identityToken = Binder.clearCallingIdentity();
-                try {
-                    AssetManager assetManager = getAssets();
-                    InputStream inputStream = assetManager.open("baking.json");
-                    JsonReader jsonReader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
-                    Type type = new TypeToken<List<JSonResponse.Recipe>>(){}.getType();
-                    recipes = new Gson().fromJson(jsonReader,type);
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
-                Binder.restoreCallingIdentity(identityToken);
+               recipes = BakingAppWidget.recipes;
             }
 
             @Override
@@ -93,7 +77,7 @@ public class BakingAppRemoteViewService extends RemoteViewsService {
             }
             private String getDescription(int i){
                 String concat = "";
-                for(JSonResponse.Ingredients s: recipes.get(i).getIngredients())
+                for(Ingredients s: recipes.get(i).getIngredients())
                     concat += TextUtils.isEmpty(concat) ? s.getIngredient() : ", " + s.getIngredient();
                 return concat;
             }

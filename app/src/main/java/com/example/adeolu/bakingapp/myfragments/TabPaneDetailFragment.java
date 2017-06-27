@@ -14,22 +14,12 @@ import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.example.adeolu.bakingapp.DetailActivity;
-import com.example.adeolu.bakingapp.DetailActivityTab;
 import com.example.adeolu.bakingapp.R;
-import com.example.adeolu.bakingapp.RecipeStepPlayer;
-import com.example.adeolu.bakingapp.utils.IngredientAdapter;
-import com.example.adeolu.bakingapp.utils.JSonResponse;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -49,12 +39,8 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.gson.Gson;
 
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -91,6 +77,43 @@ public class TabPaneDetailFragment extends Fragment implements ExoPlayer.EventLi
         initializePlayer(Uri.parse(uriString));
         return rootView;
     }
+
+    private void releasePlayer() {
+        mExoPlayer.stop();
+        mExoPlayer.release();
+    }
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        releasePlayer();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        releasePlayer();
+        mExoPlayer = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releasePlayer();
+        mExoPlayer = null;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        releasePlayer();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        releasePlayer();
+    }
+
     private void initializeMediaSession() {
 
         // Create a MediaSessionCompat.
@@ -151,8 +174,8 @@ public class TabPaneDetailFragment extends Fragment implements ExoPlayer.EventLi
     }
     private void setupViewPager(ViewPager mViewPager) {
         mSectionsPagerAdapter = new SectionsPagerAdapter(this.getActivity().getSupportFragmentManager());
-        mSectionsPagerAdapter.addFragment(new DescriptionFragment().newInstance(DetailActivityTab.description),"Description");
-        mSectionsPagerAdapter.addFragment(new IngredientFragment().newInstance(new Gson().toJson(DetailActivityTab.ingredients)),"Ingredients");
+        mSectionsPagerAdapter.addFragment(new DescriptionFragment().newInstance(DetailActivity.description),"Description");
+        mSectionsPagerAdapter.addFragment(new IngredientFragment().newInstance(new Gson().toJson(DetailActivity.ingredients)),"Ingredients");
         mViewPager.setAdapter(mSectionsPagerAdapter);
     }
 
@@ -208,6 +231,7 @@ public class TabPaneDetailFragment extends Fragment implements ExoPlayer.EventLi
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
+
 
         @Override
         public Fragment getItem(int position) {

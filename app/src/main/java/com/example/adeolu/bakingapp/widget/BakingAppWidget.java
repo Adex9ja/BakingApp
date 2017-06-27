@@ -12,12 +12,20 @@ import android.widget.RemoteViews;
 
 import com.example.adeolu.bakingapp.MainActivity;
 import com.example.adeolu.bakingapp.R;
+import com.example.adeolu.bakingapp.utils.JSonResponse;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implementation of App Widget functionality.
  */
 public class BakingAppWidget extends AppWidgetProvider {
-
+    public static List<JSonResponse.Recipe> recipes;
+    private final String ACTION_DATA_UPDATED ="com.example.adeolu.bakingapp.ACTION_DATA_UPDATED";
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
@@ -64,7 +72,10 @@ public class BakingAppWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        if(intent.getAction() == MainActivity.ACTION_DATA_UPDATED){
+        if(intent.getAction() == ACTION_DATA_UPDATED){
+            String jsonRecipe = intent.getStringExtra(context.getString(R.string.ingredients));
+            Type type = new TypeToken<List<JSonResponse.Recipe>>(){}.getType();
+            recipes = new Gson().fromJson(jsonRecipe,type);
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                     new ComponentName(context, getClass()));

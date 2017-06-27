@@ -21,23 +21,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".RecipeStepPlayer"
-            android:label="@string/title_activity_recipe_step_player"
-            android:theme="@style/AppTheme.NoActionBar" />
 
-        <receiver android:name=".RecipeStepPlayer$MediaReceiver">
+
+        <receiver android:name=".myfragments.RecipePlayerFragment$MediaReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
 
+
         <activity
-            android:name=".DetailActivity"
-            android:label="@string/title_activity_detail"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".DetailActivityTab"  />
+            android:name=".DetailActivity"  />
 
         <receiver android:name=".widget.BakingAppWidget">
             <intent-filter>
@@ -55,6 +49,8 @@
             android:enabled="true"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+        <service android:name=".widget.BakingAppIntentService"
+            android:exported="false"/>
     </application>
 
 </manifest>

@@ -1,5 +1,7 @@
 package com.example.adeolu.bakingapp.utils;
 
+import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -12,6 +14,8 @@ import com.example.adeolu.bakingapp.R;
 
 import java.util.List;
 import com.example.adeolu.bakingapp.utils.JSonResponse.*;
+import com.example.adeolu.bakingapp.widget.BakingAppIntentService;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,9 +27,11 @@ import butterknife.ButterKnife;
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>  {
     private List<Recipe> recipes;
     private RecipeClickListener mListener;
-    public RecipeAdapter(List<Recipe> vrecipes, RecipeClickListener vListener){
+    private Context context;
+    public RecipeAdapter(List<Recipe> vrecipes, RecipeClickListener vListener, Context vContext){
         recipes = vrecipes;
         mListener = vListener;
+        context = vContext;
     }
     public interface RecipeClickListener{
         void onClick(List<Ingredients> ingredient, List<Steps> step, String name, int imageid);
@@ -42,25 +48,17 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         holder.itemView.setTag(recipes.get(position).getId());
         holder.ingredient.setText(getIngredients(recipes.get(position).getIngredients()) + " \n" + recipes.get(position).getServings() + " Servings");
         holder.name.setText(recipes.get(position).getName());
-        setAppropriateImage(holder.recipe_image,position);
-    }
-
-    private void setAppropriateImage(ImageView recipe_image,int positoion) {
-        switch (positoion){
-            case 0:
-                recipe_image.setImageResource(R.drawable.nutellapie);
-                break;
-            case 1:
-                recipe_image.setImageResource(R.drawable.brownies);
-                break;
-            case 2:
-                recipe_image.setImageResource(R.drawable.yellowcake);
-                break;
-            case 3:
-                recipe_image.setImageResource(R.drawable.cheesecake);
-                break;
+        String imageUrl=recipes.get(position).getImage();
+        if (!TextUtils.isEmpty(imageUrl)) {
+            Uri builtUri = Uri.parse(imageUrl).buildUpon().build();
+            Picasso.with(context).load(builtUri).error(R.drawable.cake).into(holder.recipe_image);
+        }
+        else{
+            Picasso.with(context).load(R.drawable.cake).into(holder.recipe_image);
         }
     }
+
+
     private int getImageId(int positoion) {
         switch (positoion){
             case 0:
@@ -93,6 +91,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     public void swapRecipe(List<Recipe> vrecipes){
         recipes = vrecipes;
         notifyDataSetChanged();
+        BakingAppIntentService.startBakingService(context,vrecipes);
     }
 
     public class RecipeViewHolder extends RecyclerView.ViewHolder{

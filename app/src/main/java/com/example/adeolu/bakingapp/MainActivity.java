@@ -1,11 +1,11 @@
 package com.example.adeolu.bakingapp;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.test.espresso.IdlingResource;
+import android.support.test.espresso.core.deps.guava.annotations.VisibleForTesting;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -19,29 +19,24 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
 
-import com.example.adeolu.bakingapp.utils.JSonResponse;
 import com.example.adeolu.bakingapp.utils.JSonResponse.*;
+import com.example.adeolu.bakingapp.utils.NetworkUtils;
 import com.example.adeolu.bakingapp.utils.RecipeAdapter;
+import com.example.adeolu.bakingapp.utils.Recipies;
+import com.example.adeolu.bakingapp.utils.SimpleIdlingResource;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
 
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.internal.Utils;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -52,10 +47,25 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.mylist) RecyclerView recyclerView;
     private ProgressBar pb_loading_indicator,pb_loading_indicator_tab;
     private boolean isTwoPane = false;
-    public static final String ACTION_DATA_UPDATED ="com.example.adeolu.bakingapp.ACTION_DATA_UPDATED";
-
     private RecipeAdapter recipeAdapter;
     private final int RECIPE_LOAD_ID = 100;
+
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
+
+    /**
+     * Only called from test, creates and returns a new {@link SimpleIdlingResource}.
+     */
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,14 +80,15 @@ public class MainActivity extends AppCompatActivity
 
         pb_loading_indicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         pb_loading_indicator_tab = (ProgressBar) findViewById(R.id.pb_loading_indicator_tab);
+        getIdlingResource();
         if(pb_loading_indicator != null){
-            recipeAdapter = new RecipeAdapter(new ArrayList<Recipe>(),this);
+            recipeAdapter = new RecipeAdapter(new ArrayList<Recipe>(),this,this);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.setAdapter(recipeAdapter);
         }
         else{
-            recipeAdapter = new RecipeAdapter(new ArrayList<Recipe>(),this);
+            recipeAdapter = new RecipeAdapter(new ArrayList<Recipe>(),this,this);
             GridLayoutManager layout = new GridLayoutManager(this,2);
             recyclerView.setLayoutManager(layout);
             recyclerView.setHasFixedSize(true);
@@ -134,23 +145,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(List<Ingredients> ingredient, List<Steps> step, String name, int imageid) {
-        if(!isTwoPane){
-            Intent intent = new Intent(this,DetailActivity.class);
-            intent.putExtra(getString(R.string.recipe_ingreddient),new Gson().toJson(ingredient));
-            intent.putExtra(getString(R.string.recipe_steps),new Gson().toJson(step));
-            intent.putExtra(getString(R.string.recipe_name),name);
-            intent.putExtra(getString(R.string.imageid),imageid);
-            startActivity(intent);
-        }
-        else{
-            Intent intent = new Intent(this,DetailActivityTab.class);
-            intent.putExtra(getString(R.string.recipe_ingreddient),new Gson().toJson(ingredient));
-            intent.putExtra(getString(R.string.recipe_steps),new Gson().toJson(step));
-            intent.putExtra(getString(R.string.recipe_name),name);
-            intent.putExtra(getString(R.string.imageid),imageid);
-            startActivity(intent);
-        }
-
+        Intent intent = new Intent(this,DetailActivity.class);
+        intent.putExtra(getString(R.string.recipe_ingreddient),new Gson().toJson(ingredient));
+        intent.putExtra(getString(R.string.recipe_steps),new Gson().toJson(step));
+        intent.putExtra(getString(R.string.recipe_name),name);
+        intent.putExtra(getString(R.string.imageid),imageid);
+        startActivity(intent);
     }
 
 
@@ -167,6 +167,7 @@ public class MainActivity extends AppCompatActivity
                     else
                         pb_loading_indicator_tab.setVisibility(View.VISIBLE);
                     forceLoad();
+                    mIdlingResource.setIdleState(false);
                 }else
                     deliverResult(recipes);
             }
@@ -174,11 +175,27 @@ public class MainActivity extends AppCompatActivity
             @Override
             public List<Recipe> loadInBackground() {
                 try {
-                    AssetManager assetManager = getAssets();
-                    InputStream inputStream = assetManager.open("baking.json");
-                    JsonReader jsonReader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
-                    Type type = new TypeToken<List<Recipe>>(){}.getType();
-                    recipes = new Gson().fromJson(jsonReader,type);
+                   Recipies iRecipe = NetworkUtils.Retrieve();
+                    Call<List<Recipe>> recipe = iRecipe.getRecipe();
+                    recipe.enqueue(new Callback<List<Recipe>>() {
+                        @Override
+                        public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
+                            recipes = response.body();
+                            if(!isTwoPane)
+                                pb_loading_indicator.setVisibility(View.INVISIBLE);
+                            else
+                                pb_loading_indicator_tab.setVisibility(View.INVISIBLE);
+                            if(recipes != null){
+                                recipeAdapter.swapRecipe(recipes);
+                                mIdlingResource.setIdleState(true);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<Recipe>> call, Throwable t) {
+
+                        }
+                    });
                 }catch (Exception e){
                     e.printStackTrace();
                     return null;
@@ -191,12 +208,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<List<Recipe>> loader, List<Recipe> data) {
-        if(!isTwoPane)
-            pb_loading_indicator.setVisibility(View.INVISIBLE);
-        else
-            pb_loading_indicator_tab.setVisibility(View.INVISIBLE);
-        if(data != null)
-            recipeAdapter.swapRecipe(data);
+
+
     }
 
     @Override
