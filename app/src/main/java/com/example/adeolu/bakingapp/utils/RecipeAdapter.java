@@ -34,7 +34,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         context = vContext;
     }
     public interface RecipeClickListener{
-        void onClick(List<Ingredients> ingredient, List<Steps> step, String name, int imageid);
+        void onClick(List<Ingredients> ingredient, List<Steps> step, String name);
     }
     @Override
     public RecipeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -59,23 +59,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     }
 
 
-    private int getImageId(int positoion) {
-        switch (positoion){
-            case 0:
-                return R.drawable.nutellapie;
-            case 1:
-                return  R.drawable.brownies;
 
-            case 2:
-                return R.drawable.yellowcake;
-
-            case 3:
-                return  R.drawable.cheesecake;
-            default:
-                 return  R.drawable.cheesecake;
-
-        }
-    }
 
     private String getIngredients(List<Ingredients> ingredients) {
         String s = "";
@@ -106,7 +90,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                 public void onClick(View view) {
                     mListener.onClick(recipes.get(getPosition()).getIngredients(),
                             recipes.get(getPosition()).getSteps(),
-                            recipes.get(getPosition()).getName(),getImageId(getPosition()));
+                            recipes.get(getPosition()).getName());
                 }
             });
         }

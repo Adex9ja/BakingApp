@@ -157,31 +157,6 @@ public class RecipePlayerFragment extends Fragment implements View.OnClickListen
            mExoPlayer = null;
        }
     }
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        releasePlayer();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        releasePlayer();
-        mExoPlayer = null;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        releasePlayer();
-        mExoPlayer = null;
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        releasePlayer();
-    }
 
     @Override
     public void onPause() {

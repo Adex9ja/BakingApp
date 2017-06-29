@@ -13,8 +13,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/recipe_image"
                 android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/brownies"/>
+                android:scaleType="centerCrop" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -144,12 +144,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onClick(List<Ingredients> ingredient, List<Steps> step, String name, int imageid) {
+    public void onClick(List<Ingredients> ingredient, List<Steps> step, String name) {
         Intent intent = new Intent(this,DetailActivity.class);
         intent.putExtra(getString(R.string.recipe_ingreddient),new Gson().toJson(ingredient));
         intent.putExtra(getString(R.string.recipe_steps),new Gson().toJson(step));
         intent.putExtra(getString(R.string.recipe_name),name);
-        intent.putExtra(getString(R.string.imageid),imageid);
         startActivity(intent);
     }
 

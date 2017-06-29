@@ -1,5 +1,6 @@
 package com.example.adeolu.bakingapp.myfragments;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -26,7 +27,7 @@ public class StepsFragment extends Fragment implements StepsAdapter.StepsListene
     TextView textView;
     private RecyclerView step_list;
     static String STACK_RECIPE_STEP_DETAIL="STACK_RECIPE_STEP_DETAIL";
-
+    private String description;
     public StepsFragment() {
     }
 
@@ -60,9 +61,17 @@ public class StepsFragment extends Fragment implements StepsAdapter.StepsListene
     @Override
     public void onClick(int id, String stepsList) {
 
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, new RecipePlayerFragment().newInstance()).addToBackStack(STACK_RECIPE_STEP_DETAIL)
-                .commit();
+        if(DetailActivity.TwoPane){
+            description = DetailActivity.steps.get(id).getDescription();
+            Uri uristring = Uri.parse(DetailActivity.steps.get(id).getVideoURL());
+            TabPaneDetailFragment.swapVideo(uristring,description);
+        }
+        else {
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, new RecipePlayerFragment().newInstance()).addToBackStack(STACK_RECIPE_STEP_DETAIL)
+                    .commit();
+        }
+
     }
 }

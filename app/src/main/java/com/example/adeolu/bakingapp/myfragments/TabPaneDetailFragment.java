@@ -17,6 +17,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.adeolu.bakingapp.DetailActivity;
 import com.example.adeolu.bakingapp.R;
@@ -47,13 +48,12 @@ import java.util.List;
  */
 public class TabPaneDetailFragment extends Fragment implements ExoPlayer.EventListener {
 
+    private static final String DESCRIPTION_STR = "description";
+
     public TabPaneDetailFragment() {
 
     }
-
-    private ViewPager mViewPager;
-    private TabLayout tabLayout;
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private static TextView description;
     private  SimpleExoPlayerView mPlayerView;
     private static String URL_BUNDLE = "url_bundle";
     private static  Context context;
@@ -66,13 +66,11 @@ public class TabPaneDetailFragment extends Fragment implements ExoPlayer.EventLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.content_recipe_step_player_tab, container, false);
-        mViewPager = (ViewPager) rootView.findViewById(R.id.viewpage);
-        tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
         mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.mPlayerView);
-        setupViewPager(mViewPager);
-        tabLayout.setupWithViewPager(mViewPager);
+        description = (TextView) rootView.findViewById(R.id.description);
         context = getContext();
         uriString = getArguments().getString(URL_BUNDLE);
+        description.setText(getArguments().getString(DESCRIPTION_STR));
         initializeMediaSession();
         initializePlayer(Uri.parse(uriString));
         return rootView;
@@ -81,31 +79,6 @@ public class TabPaneDetailFragment extends Fragment implements ExoPlayer.EventLi
     private void releasePlayer() {
         mExoPlayer.stop();
         mExoPlayer.release();
-    }
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        releasePlayer();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        releasePlayer();
-        mExoPlayer = null;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        releasePlayer();
-        mExoPlayer = null;
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        releasePlayer();
     }
 
     @Override
@@ -165,18 +138,13 @@ public class TabPaneDetailFragment extends Fragment implements ExoPlayer.EventLi
         }
     }
 
-    public static void swapVideo(Uri mediaUri){
+    public static void swapVideo(Uri mediaUri,String str){
+        description.setText(str);
         String userAgent = Util.getUserAgent(context, context.getClass().getSimpleName());
         MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
                 context, userAgent), new DefaultExtractorsFactory(), null, null);
         mExoPlayer.prepare(mediaSource);
         mExoPlayer.setPlayWhenReady(true);
-    }
-    private void setupViewPager(ViewPager mViewPager) {
-        mSectionsPagerAdapter = new SectionsPagerAdapter(this.getActivity().getSupportFragmentManager());
-        mSectionsPagerAdapter.addFragment(new DescriptionFragment().newInstance(DetailActivity.description),"Description");
-        mSectionsPagerAdapter.addFragment(new IngredientFragment().newInstance(new Gson().toJson(DetailActivity.ingredients)),"Ingredients");
-        mViewPager.setAdapter(mSectionsPagerAdapter);
     }
 
     @Override
@@ -216,44 +184,15 @@ public class TabPaneDetailFragment extends Fragment implements ExoPlayer.EventLi
 
     }
 
-    public static Fragment initialize(String videoURL) {
+    public static Fragment initialize(String videoURL, String str) {
         TabPaneDetailFragment fragment = new TabPaneDetailFragment();
         Bundle bundle = new Bundle();
         bundle.putString(URL_BUNDLE,videoURL);
+        bundle.putString(DESCRIPTION_STR,str);
         fragment.setArguments(bundle);
         return fragment;
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
-    }
     private class MySessionCallback extends MediaSessionCompat.Callback {
         @Override
         public void onPlay() {
