@@ -50,20 +50,25 @@ import butterknife.ButterKnife;
 public class RecipePlayerFragment extends Fragment implements View.OnClickListener, ExoPlayer.EventListener {
     @BindView(R.id.mPlayerView)    SimpleExoPlayerView mPlayerView;
     private Button btnnext,btnprevious;
-    private TextView description;
+    private static TextView description;
     private static List<Steps> stepsList;
-    private String name;
-    private int id;
-    private Intent intent;
-    private SimpleExoPlayer mExoPlayer;
+    private static int id;
+    private static SimpleExoPlayer mExoPlayer;
     private static MediaSessionCompat mMediaSession;
     private PlaybackStateCompat.Builder mStateBuilder;
-
+    private static String URL_BUNDLE = "url_bundle";
+    private static final String DESCRIPTION_STR = "description";
+    private  String uriString;
+    private static Context context;
     public RecipePlayerFragment(){
     }
-    public static RecipePlayerFragment newInstance() {
+    public static RecipePlayerFragment newInstance(String videoURL, String str) {
         RecipePlayerFragment fragment = new RecipePlayerFragment();
         stepsList = DetailActivity.steps;
+        Bundle bundle = new Bundle();
+        bundle.putString(URL_BUNDLE,videoURL);
+        bundle.putString(DESCRIPTION_STR,str);
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -75,17 +80,31 @@ public class RecipePlayerFragment extends Fragment implements View.OnClickListen
         btnprevious = (Button) rootView.findViewById(R.id.btnprevious);
         btnnext = (Button) rootView.findViewById(R.id.btnnext);
         description = (TextView) rootView.findViewById(R.id.description);
+        context = getContext();
+        if(savedInstanceState == null){
+            uriString = getArguments().getString(URL_BUNDLE);
+            if(description != null)
+                description.setText(getArguments().getString(DESCRIPTION_STR));
+        } else{
+            uriString = savedInstanceState.getString(getString(R.string.uristring));
+            if(description != null)
+                description.setText(savedInstanceState.getString(getString(R.string.description)));
+        }
 
         if(btnnext != null && btnprevious != null){
             btnnext.setOnClickListener(this);
             btnprevious.setOnClickListener(this);
         }
 
-
         initializeMediaSession();
-        loadTheSelectedMovie(id);
-
+        initializePlayer(Uri.parse(uriString));
         return rootView;
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putCharSequence(getString(R.string.uristring),StepsFragment.uristring);
+        outState.putString(getString(R.string.description), StepsFragment.description);
     }
     private void initializePlayer(Uri mediaUri) {
         if (mExoPlayer == null) {
@@ -145,17 +164,32 @@ public class RecipePlayerFragment extends Fragment implements View.OnClickListen
         mMediaSession.setActive(true);
 
     }
-    private void loadTheSelectedMovie(int id) {
+    public  void loadTheSelectedMovie(int id) {
         if(btnnext != null && btnprevious != null)
             description.setText(stepsList.get(id).getDescription());
         initializePlayer(Uri.parse(stepsList.get(id).getVideoURL()));
+    }
+    public static void swapVideo(String mediaUri,String str){
+        if(description != null)
+            description.setText(str);
+        String userAgent = Util.getUserAgent( context , context.getClass().getSimpleName());
+        MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(mediaUri), new DefaultDataSourceFactory(
+                context, userAgent), new DefaultExtractorsFactory(), null, null);
+        mExoPlayer.prepare(mediaSource);
+        mExoPlayer.setPlayWhenReady(true);
     }
     private void releasePlayer() {
        if(mExoPlayer != null){
            mExoPlayer.stop();
            mExoPlayer.release();
-           mExoPlayer = null;
        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releasePlayer();
+        mExoPlayer = null;
     }
 
     @Override
@@ -163,7 +197,6 @@ public class RecipePlayerFragment extends Fragment implements View.OnClickListen
         super.onPause();
         releasePlayer();
     }
-
     @Override
     public void onClick(View view) {
         if(view == btnnext){

@@ -1,6 +1,9 @@
 package com.example.adeolu.bakingapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -96,7 +99,7 @@ public class MainActivity extends AppCompatActivity
             isTwoPane = true;
         }
 
-        if(savedInstanceState == null)
+        if(savedInstanceState == null && IsThereANetwork())
             getSupportLoaderManager().initLoader(RECIPE_LOAD_ID,null,this);
 
     }
@@ -152,6 +155,13 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    private boolean IsThereANetwork(){
+        ConnectivityManager cm =
+                (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
 
     @Override
     public Loader<List<Recipe>> onCreateLoader(int id, Bundle args) {

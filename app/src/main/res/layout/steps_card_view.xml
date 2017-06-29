@@ -7,7 +7,7 @@
             android:orientation="horizontal">
             <ImageView
                 android:id="@+id/step_image"
-                android:layout_width="0dp"
+                android:layout_width="@dimen/zerodo"
                 android:layout_height="@dimen/step_pix"
                 android:layout_weight="1"
                 android:scaleType="centerCrop"
@@ -15,7 +15,7 @@
                 android:adjustViewBounds="true"/>
             <TextView
                 android:paddingLeft="@dimen/medium_10"
-                android:layout_width="0dp"
+                android:layout_width="@dimen/zerodo"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:id="@+id/description"/>

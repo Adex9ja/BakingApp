@@ -12,14 +12,16 @@
     <com.google.android.exoplayer2.ui.SimpleExoPlayerView
         android:id="@+id/mPlayerView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/zerodo"
         android:layout_weight="2"
         android:layout_margin="@dimen/small_5"/>
     <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+        android:layout_height="@dimen/zerodo"
             android:layout_weight="1"
             android:layout_marginLeft="@dimen/small_5"
+            android:layout_marginStart="@dimen/small_5"
+            android:layout_marginEnd="@dimen/small_5"
             android:layout_marginRight="@dimen/small_5">
             <LinearLayout  style="@style/Widget.CardContent"
                 android:layout_height="match_parent">
@@ -35,7 +37,7 @@
         android:padding="@dimen/small_5">
         <Button
             android:id="@+id/btnprevious"
-            android:layout_width="150dp"
+            android:layout_width="@dimen/buttonsize"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
             android:textColor="@color/accent"
@@ -43,7 +45,7 @@
             android:text="@string/previous"/>
         <Button
             android:id="@+id/btnnext"
-            android:layout_width="150dp"
+            android:layout_width="@dimen/buttonsize"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
             android:textColor="@color/accent"

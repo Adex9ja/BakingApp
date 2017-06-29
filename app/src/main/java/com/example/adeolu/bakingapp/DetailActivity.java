@@ -8,8 +8,8 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
+import com.example.adeolu.bakingapp.myfragments.RecipePlayerFragment;
 import com.example.adeolu.bakingapp.myfragments.StepsFragment;
-import com.example.adeolu.bakingapp.myfragments.TabPaneDetailFragment;
 import com.example.adeolu.bakingapp.utils.JSonResponse;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -45,7 +45,7 @@ public class DetailActivity extends AppCompatActivity  {
             bar.setTitle(name);
         }
 
-        if(findViewById(R.id.container) != null){
+        if(findViewById(R.id.container) != null && savedInstanceState == null){
             TwoPane = true;
             ShowFirstStep();
         }
@@ -63,12 +63,11 @@ public class DetailActivity extends AppCompatActivity  {
                 .addToBackStack(STACK_RECIPE_DETAIL)
                 .commit();
     }
-
     private void ShowFirstStep() {
         ShowMaster();
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, new TabPaneDetailFragment()
-                 .initialize(steps.get(0).getVideoURL(),steps.get(0).getDescription()))
+                .add(R.id.container, new RecipePlayerFragment()
+                .newInstance(steps.get(0).getVideoURL(),steps.get(0).getDescription()))
                 .commit();
     }
     @Override

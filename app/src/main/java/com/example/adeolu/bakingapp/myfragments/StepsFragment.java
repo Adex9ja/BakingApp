@@ -1,5 +1,6 @@
 package com.example.adeolu.bakingapp.myfragments;
 
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,7 +28,7 @@ public class StepsFragment extends Fragment implements StepsAdapter.StepsListene
     TextView textView;
     private RecyclerView step_list;
     static String STACK_RECIPE_STEP_DETAIL="STACK_RECIPE_STEP_DETAIL";
-    private String description;
+    public static String description,uristring;
     public StepsFragment() {
     }
 
@@ -50,26 +51,24 @@ public class StepsFragment extends Fragment implements StepsAdapter.StepsListene
     }
 
     private void loadIngredients() {
-        textView.append("Ingredients\n");
+        textView.append(getString(R.string.ingredients) + "\n");
         for(Ingredients str: DetailActivity.ingredients){
             textView.append("\u2022 "+ str.getIngredient());
             textView.append("\t ("+str.getQuantity().toString());
             textView.append(" - "+str.getMeasure()+")\n");
         }
     }
-
     @Override
     public void onClick(int id, String stepsList) {
-
+        description = DetailActivity.steps.get(id).getDescription();
+        uristring = DetailActivity.steps.get(id).getVideoURL();
         if(DetailActivity.TwoPane){
-            description = DetailActivity.steps.get(id).getDescription();
-            Uri uristring = Uri.parse(DetailActivity.steps.get(id).getVideoURL());
-            TabPaneDetailFragment.swapVideo(uristring,description);
+            RecipePlayerFragment.swapVideo(uristring,description);
         }
         else {
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, new RecipePlayerFragment().newInstance()).addToBackStack(STACK_RECIPE_STEP_DETAIL)
+                    .add(R.id.fragment_container, new RecipePlayerFragment().newInstance(uristring,description)).addToBackStack(STACK_RECIPE_STEP_DETAIL)
                     .commit();
         }
 

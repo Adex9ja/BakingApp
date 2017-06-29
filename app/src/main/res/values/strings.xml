@@ -16,4 +16,6 @@
     <string name="about">About</string>
     <string name="contact">Contact</string>
     <string name="share">Share</string>
+    <string name="uristring">URISTRING</string>
+    <string name="description">DESCRIPTION</string>
 </resources>
