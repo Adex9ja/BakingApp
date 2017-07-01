@@ -8,13 +8,15 @@
     tools:context="com.example.adeolu.bakingapp.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/mylist"/>
     <ProgressBar
         android:layout_width="@dimen/progress"
         android:layout_height="@dimen/progress"
+        android:elevation="@dimen/onedp"
         android:id="@+id/pb_loading_indicator_tab"
         android:layout_gravity="center"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mylist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </FrameLayout>

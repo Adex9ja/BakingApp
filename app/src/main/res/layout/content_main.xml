@@ -16,5 +16,6 @@
         android:layout_width="@dimen/progress"
         android:layout_height="@dimen/progress"
         android:id="@+id/pb_loading_indicator"
+        android:elevation="@dimen/onedp"
         android:layout_gravity="center"/>
 </FrameLayout>

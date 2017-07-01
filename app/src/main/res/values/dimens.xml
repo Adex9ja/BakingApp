@@ -5,6 +5,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="nav_header_vertical_spacing">16dp</dimen>
     <dimen name="zerodo">0dp</dimen>
+    <dimen name="onedp">1dp</dimen>
     <dimen name="twodp">2dp</dimen>
     <dimen name="card_view">16dp</dimen>
     <dimen name="medium_10">10dp</dimen>
